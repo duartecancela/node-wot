@@ -1,0 +1,27 @@
+{
+    "@context": ["https://www.w3.org/2019/wot/td/v1", { "mqv": "http://www.example.org/mqtt-binding" }],
+    "title": "SmartCoffeeMachine",
+    "id": "urn:dev:wot:coffee-machine",
+    "security": ["nosec"],
+    "securityDefinitions": {
+        "nosec": { "scheme": "nosec" }
+    },
+    "properties": {
+        "waterAlert": {
+            "type": "object",
+            "readOnly": true,
+            "observable": true,
+            "properties": {
+                "value": { "type": "string" }
+            },
+            "forms": [
+                {
+                    "href": "mqtt://localhost:1883/coffee-machine/alert/water",
+                    "contentType": "application/json",
+                    "op": ["observeproperty"],
+                    "mqv:controlPacket": "PUBLISH"
+                }
+            ]
+        }
+    }
+}

@@ -10,7 +10,7 @@ Este projeto baseia-se na máquina de café inteligente do repositório [Eclipse
 -   **Consumidor MQTT (Client)**: `smart-coffee-consumer.js`
     -   Subscreve ao tópico MQTT
     -   Simula redução do nível de água por teclado ou aleatoriamente
-    -   Apresenta notificações de alerta no terminal
+    -   Lê a Thing Description (TD) e observa a propriedade `waterAlert` usando binding MQTT
 
 ---
 
@@ -23,53 +23,21 @@ Este projeto baseia-se na máquina de café inteligente do repositório [Eclipse
 
 ### 2. Instalar dependências
 
-Se estiver a trabalhar num projeto novo e ainda não tiver as bibliotecas:
-
 ```bash
-npm install @node-wot/core
-npm install @node-wot/binding-http
-npm install mqtt
-```
-
-Ou alternativamente, pode instalar todas de uma vez:
-
-```bash
-npm install @node-wot/core @node-wot/binding-http mqtt
+npm install @node-wot/core @node-wot/binding-http @node-wot/binding-mqtt mqtt
 ```
 
 ---
 
 ### 3. Iniciar o broker Mosquitto
 
-#### ✅ Verificar se o Mosquitto está instalado
-
-```bash
-mosquitto -h
-```
-
-#### 🆚 Ver versão do Mosquitto
+**Windows:**
 
 ```bash
 mosquitto -v
 ```
 
-Se o comando não for reconhecido, é necessário instalar o Mosquitto:
-
--   **Windows**: [https://mosquitto.org/download](https://mosquitto.org/download)
--   **Linux (Ubuntu/Debian)**:
-
-```bash
-sudo apt update
-sudo apt install mosquitto mosquitto-clients
-```
-
-#### ▶️ Iniciar Mosquitto manualmente (modo terminal)
-
-```bash
-mosquitto -v
-```
-
-#### ▶️ Iniciar Mosquitto como serviço (Linux)
+**Linux:**
 
 ```bash
 sudo service mosquitto start
@@ -83,10 +51,6 @@ sudo service mosquitto start
 node examples/scripts/smart-coffee-machine-mqtt.js
 ```
 
--   O produtor será exposto em: `http://localhost:8080/smart-coffee-machine`
--   O nível de água é reduzido via ação `decreaseWater`
--   Se `waterLevel < 20`, é publicado um alerta MQTT
-
 ---
 
 ### 5. Executar o consumidor
@@ -95,27 +59,47 @@ node examples/scripts/smart-coffee-machine-mqtt.js
 node examples/scripts/smart-coffee-consumer.js
 ```
 
--   Mostra um menu interativo para:
-    -   Reduzir o nível manualmente
-    -   Reduzir de forma aleatória
--   Publica e subscreve mensagens MQTT
+---
+
+## 📘 Uso de Binding Templates (MQTT)
+
+Este projeto utiliza uma Thing Description (TD) com o protocolo MQTT, conforme os binding templates descritos pelo W3C.
+
+A propriedade `waterAlert` está definida com:
+
+-   `"op": ["observeproperty"]`
+-   `"mqv:controlPacket": "PUBLISH"`
+-   `"contentType": "application/json"`
+-   Tipo: `object` com subpropriedade `"value": "string"`
 
 ---
 
-## 🔁 Publicar e Subscrever via linha de comandos (CLI)
+## 📡 Exemplo de mensagem publicada
 
-Caso se deseje testar os tópicos manualmente fora do sistema WoT, pode utilizar o cliente de consola `mosquitto_pub` e `mosquitto_sub`.
+As mensagens publicadas no tópico `coffee-machine/alert/water` seguem agora este formato:
 
-### ▶️ Publicar uma mensagem:
-
-```bash
-mosquitto_pub -h localhost -t coffee-machine/alert/water -m "Manual test: water too low"
+```json
+{ "value": "Manual water alert: 8%" }
 ```
 
-### 📡 Subscrever a um tópico:
+---
 
-```bash
-mosquitto_sub -h localhost -t coffee-machine/alert/water
+## 🧾 Excerto da Thing Description (TD)
+
+```json
+"waterAlert": {
+  "type": "object",
+  "observable": true,
+  "properties": {
+    "value": { "type": "string" }
+  },
+  "forms": [
+    {
+      "href": "mqtt://localhost:1883/coffee-machine/alert/water",
+      "op": ["observeproperty"],
+      "contentType": "application/json",
+      "mqv:controlPacket": "PUBLISH"
+    }
+  ]
+}
 ```
-
-Estas ferramentas permitem validar facilmente o sistema e monitorizar os alertas em tempo real.
