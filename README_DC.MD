@@ -20,21 +20,56 @@ Este projeto baseia-se na máquina de café inteligente do repositório [Eclipse
 
 -   Node.js instalado
 -   Broker MQTT local (ex: Mosquitto)
--   Dependências instaladas:
+
+### 2. Instalar dependências
+
+Se estiver a trabalhar num projeto novo e ainda não tiver as bibliotecas:
+
+```bash
+npm install @node-wot/core
+npm install @node-wot/binding-http
+npm install mqtt
+```
+
+Ou alternativamente, pode instalar todas de uma vez:
 
 ```bash
 npm install @node-wot/core @node-wot/binding-http mqtt
 ```
 
-### 2. Iniciar o broker Mosquitto
+---
 
-**Windows (com instalação completa):**
+### 3. Iniciar o broker Mosquitto
+
+#### ✅ Verificar se o Mosquitto está instalado
+
+```bash
+mosquitto -h
+```
+
+#### 🆚 Ver versão do Mosquitto
 
 ```bash
 mosquitto -v
 ```
 
-**Linux (caso esteja instalado via apt):**
+Se o comando não for reconhecido, é necessário instalar o Mosquitto:
+
+-   **Windows**: [https://mosquitto.org/download](https://mosquitto.org/download)
+-   **Linux (Ubuntu/Debian)**:
+
+```bash
+sudo apt update
+sudo apt install mosquitto mosquitto-clients
+```
+
+#### ▶️ Iniciar Mosquitto manualmente (modo terminal)
+
+```bash
+mosquitto -v
+```
+
+#### ▶️ Iniciar Mosquitto como serviço (Linux)
 
 ```bash
 sudo service mosquitto start
@@ -42,7 +77,7 @@ sudo service mosquitto start
 
 ---
 
-### 3. Executar o produtor
+### 4. Executar o produtor
 
 ```bash
 node examples/scripts/smart-coffee-machine-mqtt.js
@@ -54,7 +89,7 @@ node examples/scripts/smart-coffee-machine-mqtt.js
 
 ---
 
-### 4. Executar o consumidor
+### 5. Executar o consumidor
 
 ```bash
 node examples/scripts/smart-coffee-consumer.js
