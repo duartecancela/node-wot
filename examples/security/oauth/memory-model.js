@@ -27,7 +27,7 @@ module.exports = class InMemoryModel {
                 clientSecret: "isgreat!",
                 redirectUris: [""],
                 grants: ["client_credentials"],
-                scopes: ["user"],
+                scopes: ["user", "coffee:access"],
             },
         ];
         this.tokens = [];

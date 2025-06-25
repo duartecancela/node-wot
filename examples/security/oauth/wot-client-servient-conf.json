@@ -9,6 +9,10 @@
         "urn:dev:wot:oauth:test": {
             "clientId": "node-wot",
             "clientSecret": "isgreat!"
+        },
+        "urn:dev:wot:oauth:coffee": {
+            "clientId": "node-wot",
+            "clientSecret": "isgreat!"
         }
     }
 }
